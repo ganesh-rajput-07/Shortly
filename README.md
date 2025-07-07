@@ -37,9 +37,10 @@ source venv/bin/activate        # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # 4. Run the project
-uvicorn main:app --reload       # If FastAPI
+uvicorn main:app --reload             # from FastAPI folder
 # OR
-python manage.py runserver                   # If Flask
+python manage.py runserver 8500       # from Django ui folder
 
 # 5. Open in browser:
-http://127.0.0.1:8000
+http://127.0.0.1:8000/docs      # for the Fastapi
+http://127.0.0.1:8500/login     # for UI
