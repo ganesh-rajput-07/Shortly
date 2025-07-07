@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}My URLs{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white rounded-2xl p-8 shadow-2xl backdrop-blur-md" style="background: linear-gradient(to bottom right, #fff7ed, #ffedd5);">
+  <h2 class="text-3xl font-bold mb-6 text-center text-gray-900">Your Shortened URLs</h2>
+
+  {% if urls %}
+  <table class="w-full text-left border-separate border-spacing-y-3">
+    <thead>
+      <tr class="text-gray-700">
+    <th class="px-4 py-2 text-left">Original URL</th>
+    <th class="px-4 py-2 text-left">Shortened</th>
+    <th class="px-4 py-2 text-center">Clicks</th>
+    <th class="px-4 py-2 text-center">Action</th>
+  </tr>
+    </thead>
+    <tbody>
+      {% for url in urls %}
+      <tr class="bg-orange-50 hover:bg-orange-100 transition rounded shadow-sm">
+        <td class="p-3 break-all">{{ url.originalUrl }}</td>
+       <td class="p-3 break-all flex items-center gap-2">
+  <span id="shorturl-{{ url.id }}" class="text-blue-600 underline cursor-pointer">
+    <a href="http://127.0.0.1:8000/to/{{ url.shortenUrl }}" style="text-decoration: none;">http://127.0.0.1:8000/to/{{ url.shortenUrl }}</a>
+  </span>
+ 
+<button onclick="copyToClipboard('{{ url.id }}', this)" class="ml-2 text-blue-600 hover:text-blue-800" title="Copy">
+  <i class="fas fa-copy"></i>
+</button>
+
+</td>
+
+       <td class="p-3 text-center" id="clicks-{{ url.id }}">{{ url.clicks }}</td>
+<td class="p-3">
+          <a href="{% url 'delete_url' url.id %}?token={{ token }}" class="text-red-500 hover:text-red-700 font-medium">Delete</a>
+        </td>
+
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-center text-gray-700 mt-6">No URLs found. <a href="{% url 'shorten' %}" class="text-orange-600 hover:underline">Shorten one now</a>.</p>
+  {% endif %}
+</div>
+<script>
+  const token = "{{ token }}";
+
+  async function updateClickCounts() {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/my-urls?token=${token}`);
+      const urls = await response.json();
+
+      urls.forEach(url => {
+        const el = document.getElementById(`clicks-${url.id}`);
+        if (el) el.textContent = url.clicks;
+      });
+    } catch (err) {
+      console.error("Failed to fetch click counts:", err);
+    }
+  }
+  function copyToClipboard(id) {
+  const text = document.getElementById('shorturl-' + id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Copied to clipboard!");
+  });
+}
+
+  function copyToClipboard(id, btn) {
+    const text = document.getElementById('shorturl-' + id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const originalIcon = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check text-green-600"></i>';
+      setTimeout(() => {
+        btn.innerHTML = originalIcon;
+      }, 1500);
+    });
+  }
+
+
+
+  // Poll every 5 seconds
+  setInterval(updateClickCounts, 5000);
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+{% endblock %}

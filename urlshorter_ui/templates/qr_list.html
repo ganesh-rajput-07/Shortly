@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Your Short URLs{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-2xl font-bold text-gray-900">Your URLs</h2>
+    <a href="{% url 'export_csv' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Export CSV
+    </a>
+  </div>
+
+  {% if urls %}
+    <div class="overflow-x-auto">
+      <table class="min-w-full table-auto border-collapse border border-gray-300 shadow-sm">
+        <thead class="bg-gray-100 text-gray-700 text-left">
+          <tr>
+            <th class="px-4 py-2 border">Original URL</th>
+            <th class="px-4 py-2 border">Short URL</th>
+            <th class="px-4 py-2 border">Clicks</th>
+            <th class="px-4 py-2 border">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for url in urls %}
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-2 border truncate">{{ url.originalUrl }}</td>
+            <td class="px-4 py-2 border text-blue-600">
+              <a href="{{ url.shortenUrl }}" target="_blank">{{ url.shortenUrl }}</a>
+            </td>
+            <td class="px-4 py-2 border text-center">{{ url.clicks }}</td>
+            <td class="px-4 py-2 border text-red-600 text-center">
+              {{ url.id }}
+              <a href="{% url 'delete_url' url.id %}" onclick="return confirm('Delete this URL?')">Delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-gray-600 mt-4">No URLs found.</p>
+  {% endif %}
+</div>
+<script src="https://cdn.tailwindcss.com"></script><!-- Paste Font Awesome CDN in base.html if not already -->
+
+
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}QR Code Generator{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-2xl p-8 shadow-2xl backdrop-blur-md" style="background: linear-gradient(to bottom right, #fff7ed, #ffedd5);">
+  <h2 class="text-3xl font-bold mb-6 text-center text-gray-900">Generate QR Code</h2>
+
+  <form method="POST" enctype="multipart/form-data" class="space-y-6">
+    {% csrf_token %}
+    <div>
+      <label class="block font-semibold mb-1">URL</label>
+      <input type="url" name="qr_url" required class="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400">
+    </div>
+
+    <div>
+      <label class="block font-semibold mb-1">Optional Logo</label>
+      <input type="file" name="logo" accept="image/*" class="w-full">
+    </div>
+
+    <div>
+  <label class="block font-semibold">Color:</label>
+  <input type="color" name="qr_color" value="#000000">
+</div>
+<div>
+  <label class="block font-semibold">Background:</label>
+  <input type="color" name="qr_bg" value="#ffffff">
+</div>
+<div>
+  <label class="block font-semibold">Box Size:</label>
+  <input type="number" name="qr_size" value="10" min="1" max="50">
+</div>
+
+
+    <div>
+      <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-md shadow-md transition">
+        Generate QR
+      </button>
+    </div>
+  </form>
+</div>
+
+{% if qr_image %}
+  <div class="mt-6 text-center">
+    <h3 class="text-lg font-semibold mb-2 text-gray-800">Your QR Code:</h3>
+    <img id="qrPreview" src="data:image/png;base64,{{ qr_image }}" alt="QR Code" class="inline-block shadow-md rounded-lg border border-gray-300">
+
+    <div class="mt-4">
+      <a id="downloadBtn" download="qr_code.png" class="inline-block bg-orange-600 hover:bg-ogrange-700 text-white font-semibold py-2 px-4 rounded-md shadow transition">
+        Download QR Code
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Automatically assign the base64 image to the download link
+    const qrImage = document.getElementById('qrPreview');
+    const downloadLink = document.getElementById('downloadBtn');
+
+    if (qrImage && downloadLink) {
+      downloadLink.href = qrImage.src;
+    }
+  </script>
+{% endif %}
+
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}

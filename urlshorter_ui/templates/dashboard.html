@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto mt-10">
+  <h2 class="text-3xl font-bold text-center mb-6">Your Dashboard</h2>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+    <div class="bg-orange-500 text-white rounded-xl shadow-md p-6 text-center">
+      <i class="fas fa-link text-3xl mb-2"></i>
+      <h3 class="text-xl font-semibold">Total URLs</h3>
+      <p class="text-4xl font-bold mt-2">{{ stats.total_urls }}</p>
+    </div>
+    <div class="bg-green-500 text-white rounded-xl shadow-md p-6 text-center">
+      <i class="fas fa-chart-line text-3xl mb-2"></i>
+      <h3 class="text-xl font-semibold">Total Clicks</h3>
+      <p class="text-4xl font-bold mt-2">{{ stats.total_clicks }}</p>
+    </div>
+    <div class="bg-blue-500 text-white rounded-xl shadow-md p-6 text-center">
+      <i class="fas fa-clock text-3xl mb-2"></i>
+      <h3 class="text-xl font-semibold">Last 7 Days</h3>
+      <p class="text-2xl mt-2 text-yellow-100 italic">Coming Soon</p>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="bg-white p-6 rounded-xl shadow-md mb-6">
+    <h3 class="text-xl font-bold mb-4">Click Analytics (Top URLs)</h3>
+    <canvas id="clickChart" height="200"></canvas>
+  </div>
+
+  <!-- Export CSV Button -->
+  <div class="flex justify-end">
+    <a href="{% url 'export_urls' %}" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-md transition inline-flex items-center gap-2">
+      <i class="fas fa-file-csv"></i> Export CSV
+    </a>
+  </div>
+</div>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const token = "{{ token }}";
+    const ctx = document.getElementById('clickChart').getContext('2d');
+
+    fetch(`http://127.0.0.1:8000/top-urls?token=${token}`)
+      .then(res => {
+        if (!res.ok) throw new Error("API fetch failed with status " + res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log("Chart API response:", data);
+
+        const colors = ['#f97316', '#10b981', '#3b82f6', '#facc15', '#6366f1'];
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: data.labels,
+            datasets: [{
+              label: 'Clicks',
+              data: data.data,
+              backgroundColor: colors.slice(0, data.labels.length)
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      })
+      .catch(err => {
+        console.error("Chart fetch failed:", err);
+      });
+  });
+</script>
+{% endblock %}
+

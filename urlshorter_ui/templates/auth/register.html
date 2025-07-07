@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-2xl p-8 shadow-2xl backdrop-blur-md" style="background: linear-gradient(to bottom right, #fff7ed, #ffedd5);">
+  <h2 class="text-3xl font-bold mb-6 text-center text-gray-900">Create Your Account</h2>
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+      {{ form.email.label_tag }}
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+
+    <div>
+      {{ form.password.label_tag }}
+      {{ form.password }}
+      {{ form.password.errors }}
+    </div>
+
+    <div>
+      <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-md shadow-md transition">
+        Register
+      </button>
+    </div>
+  </form>
+
+  <p class="text-sm text-center mt-6 text-gray-700">
+    Already have an account?
+    <a href="{% url 'login' %}" class="text-orange-600 font-medium hover:underline">Login here</a>
+  </p>
+</div>
+<script src="https://cdn.tailwindcss.com"></script>
+
+{% endblock %}

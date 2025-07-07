@@ -1,0 +1,7 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+}
+
+form input, form select, form textarea {
+    border-radius: 10px;
+}
