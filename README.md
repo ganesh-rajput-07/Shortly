@@ -39,7 +39,7 @@ pip install -r requirements.txt
 # 4. Run the project
 uvicorn main:app --reload       # If FastAPI
 # OR
-python app.py                   # If Flask
+python manage.py runserver                   # If Flask
 
 # 5. Open in browser:
 http://127.0.0.1:8000
